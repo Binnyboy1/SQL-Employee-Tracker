@@ -38,7 +38,7 @@ function init() {
             }
         ])
         .then((answers) => {
-            // console.log(answers.start);
+
             if (answers.start === "View All Employees") {
                 db.query("SELECT * from employee_table", (err, data) => {
                     if (err) {
@@ -51,6 +51,30 @@ function init() {
                         init();
                     }
                 });
+            } else if (answers.start === "View All Roles") {
+                db.query("SELECT * from role_table", (err, data) => {
+                    if (err) {
+                        res.status(500).json({ error: err.message });
+                        return;
+                    } else {
+                        const transformed = data.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
+                        // learned from https://stackoverflow.com/questions/49618069/remove-index-from-console-table/53653088#53653088 
+                        console.table(transformed);
+                        init();
+                    }
+                });
+            } else if (answers.start === "View All Departments") {
+                db.query("SELECT * from department_table", (err, data) => {
+                    if (err) {
+                        res.status(500).json({ error: err.message });
+                        return;
+                    } else {
+                        const transformed = data.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
+                        // learned from https://stackoverflow.com/questions/49618069/remove-index-from-console-table/53653088#53653088 
+                        console.table(transformed);
+                        init();
+                    }
+                });   
             } else if (answers.start !== "Quit") {
                 init();
             }
