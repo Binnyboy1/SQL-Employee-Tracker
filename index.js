@@ -1,4 +1,23 @@
 var inquirer = require('inquirer');
+const express = require('express');
+const mysql = require('mysql2');
+
+const PORT = process.env.PORT || 3001;
+const app = express();
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// Connect to database
+const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        user: 'root',
+        password: 'rootroot',
+        database: 'members_db'
+    },
+    console.log(`Connected to the members_db database.`)
+);
 
 function init() {
     inquirer
@@ -19,13 +38,22 @@ function init() {
             }
         ])
         .then((answers) => {
-            // Use user feedback for... whatever!!
-            console.log(answers.start);
-            /*
-            answers.confirm === answers.password
-                ? console.log('Success!')
-                : console.log('You forgot your password already?!')
-            */
+            // console.log(answers.start);
+            if (answers.start === "View All Employees") {
+                db.query("SELECT * from employee_table", (err, data) => {
+                    if (err) {
+                        res.status(500).json({ error: err.message });
+                        return;
+                    } else {
+                        const transformed = data.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
+                        // learned from https://stackoverflow.com/questions/49618069/remove-index-from-console-table/53653088#53653088 
+                        console.table(transformed);
+                        init();
+                    }
+                });
+            } else if (answers.start !== "Quit") {
+                init();
+            }
             // writeToFile(data.fileName, generate(data))
         })
         .catch((error) => {
