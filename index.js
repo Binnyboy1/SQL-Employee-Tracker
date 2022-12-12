@@ -1,6 +1,7 @@
 var inquirer = require('inquirer');
 const express = require('express');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -45,9 +46,8 @@ function init() {
                         res.status(500).json({ error: err.message });
                         return;
                     } else {
-                        const transformed = data.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
-                        // learned from https://stackoverflow.com/questions/49618069/remove-index-from-console-table/53653088#53653088 
-                        console.table(transformed);
+                        console.log('\n');
+                        console.table(data);
                         init();
                     }
                 });
@@ -57,9 +57,8 @@ function init() {
                         res.status(500).json({ error: err.message });
                         return;
                     } else {
-                        const transformed = data.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
-                        // learned from https://stackoverflow.com/questions/49618069/remove-index-from-console-table/53653088#53653088 
-                        console.table(transformed);
+                        console.log('\n');
+                        console.table(data);
                         init();
                     }
                 });
@@ -69,13 +68,16 @@ function init() {
                         res.status(500).json({ error: err.message });
                         return;
                     } else {
-                        const transformed = data.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
-                        // learned from https://stackoverflow.com/questions/49618069/remove-index-from-console-table/53653088#53653088 
-                        console.table(transformed);
+                        console.log('\n');
+                        console.table(data);
                         init();
                     }
                 });   
             } else if (answers.start !== "Quit") {
+                db.query("SELECT * from role_table.department_id, department_table.id FROM ", (err, data) => {
+                    console.table(data);
+                });
+
                 init();
             }
             // writeToFile(data.fileName, generate(data))
