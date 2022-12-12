@@ -42,9 +42,28 @@ function init() {
 
             if (answers.start === "View All Employees") {
 
-                db.query("SELECT * from employee_table", (err, data) => {
+                /*
+                const key_position_2 = "B.department_id";
+                const key_2 = "C.id";
+                const sql_2 = `
+                SELECT B.id, B.title, C.dep_name, B.salary
+                FROM role_table AS B
+                JOIN department_table AS C
+                ON ${key_position_2} = ${key_2}
+                `;
+                */
+                const key_position = "A.role_id";
+                const key = "B.id";
+                const sql = `
+                SELECT A.id, A.first_name, A.last_name, B.title, B.department_id, B.salary, A.manager_id
+                FROM employee_table AS A
+                JOIN role_table AS B
+                ON ${key_position} = ${key}
+                `;
+
+                db.query(sql, (err, data) => {
                     if (err) {
-                        res.status(500).json({ error: err.message });
+                        console.log(err.message);
                         return;
                     } else {
                         console.log('\n');
@@ -52,7 +71,7 @@ function init() {
                         init();
                     }
                 });
-                
+
             } else if (answers.start === "View All Roles") {
 
                 const key_id = "role_table.department_id";
@@ -66,7 +85,7 @@ function init() {
 
                 db.query(sql, (err, data) => {
                     if (err) {
-                        res.status(500).json({ error: err.message });
+                        console.log(err.message);
                         return;
                     } else {
                         console.log('\n');
@@ -79,7 +98,7 @@ function init() {
 
                 db.query("SELECT * from department_table", (err, data) => {
                     if (err) {
-                        res.status(500).json({ error: err.message });
+                        console.log(err.message);
                         return;
                     } else {
                         console.log('\n');
