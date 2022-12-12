@@ -41,6 +41,7 @@ function init() {
         .then((answers) => {
 
             if (answers.start === "View All Employees") {
+
                 db.query("SELECT * from employee_table", (err, data) => {
                     if (err) {
                         res.status(500).json({ error: err.message });
@@ -51,8 +52,19 @@ function init() {
                         init();
                     }
                 });
+                
             } else if (answers.start === "View All Roles") {
-                db.query("SELECT * from role_table", (err, data) => {
+
+                const key_id = "role_table.department_id";
+                const fill_id = "department_table.id";
+                const sql = `
+                SELECT role_table.id, role_table.title, role_table.salary, department_table.dep_name, ${fill_id}
+                FROM department_table 
+                JOIN role_table
+                ON ${fill_id} = ${key_id}
+                `;
+
+                db.query(sql, (err, data) => {
                     if (err) {
                         res.status(500).json({ error: err.message });
                         return;
@@ -62,7 +74,9 @@ function init() {
                         init();
                     }
                 });
+
             } else if (answers.start === "View All Departments") {
+
                 db.query("SELECT * from department_table", (err, data) => {
                     if (err) {
                         res.status(500).json({ error: err.message });
@@ -72,12 +86,9 @@ function init() {
                         console.table(data);
                         init();
                     }
-                });   
-            } else if (answers.start !== "Quit") {
-                db.query("SELECT * from role_table.department_id, department_table.id FROM ", (err, data) => {
-                    console.table(data);
                 });
 
+            } else if (answers.start !== "Quit") {
                 init();
             }
             // writeToFile(data.fileName, generate(data))
